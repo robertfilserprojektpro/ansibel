@@ -1,0 +1,9 @@
+---
+# Playbook to reboot all specified hosts
+- name: reboot all hosts
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - name: reboot host
+      ansible.builtin.reboot:
