@@ -1,0 +1,26 @@
+---
+# Playbook to stop FileMaker Server on Ubuntu hosts
+- name: Stop FileMaker Server
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - name: Stop FileMaker Server using fmsadmin
+      ansible.builtin.shell: |
+        fmsadmin stop server -y -u fmadmin
+      register: stop_command_output
+      failed_when: stop_command_output.rc != 0 and "already stopped" not in stop_command_output.stderr
+
+    - name: Wait for FileMaker Server to stop
+      ansible.builtin.shell: |
+        pgrep -f "filemaker" || exit 0
+      register: pgrep_output
+      until: pgrep_output.rc != 0
+      retries: 20
+      delay: 3
+      ignore_errors: true
+
+    - name: Notify FileMaker Server stop status
+      ansible.builtin.debug:
+        msg: "FileMaker Server has been stopped successfully."
+      when: pgrep_output.rc != 0
