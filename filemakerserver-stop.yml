@@ -1,0 +1,16 @@
+---
+# Playbook to stop FileMaker Server services on Ubuntu
+- name: Stop FileMaker Server
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - name: Stop FileMaker Server service
+      ansible.builtin.command: 
+        cmd: fmsadmin stop server -y -u fmadmin
+      ignore_errors: yes
+
+    - name: Stop fmshelper service
+      ansible.builtin.systemd:
+        name: fmshelper
+        state: stopped
