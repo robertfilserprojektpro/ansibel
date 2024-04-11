@@ -1,0 +1,38 @@
+---
+- name: Update Let's Encrypt certificates for FileMaker Server on Ubuntu 20.04
+  hosts: all
+  gather_facts: yes  # Aktiviert, um 'ansible_fqdn' zu verwenden
+  become: true
+  vars:
+    fmadmin_password: "{{ vault_fmadmin }}"
+  tasks:
+    - name: Copy fullchain.pem to FileMaker Server directory
+      ansible.builtin.copy:
+        src: "/etc/letsencrypt/live/{{ ansible_fqdn }}/fullchain.pem"
+        dest: "/opt/FileMaker/FileMaker Server/CStore/le_fullchain.pem"
+        remote_src: yes
+        owner: fmserver
+        group: fmsadmin
+        mode: '0640'
+
+    - name: Copy privkey.pem to FileMaker Server directory
+      ansible.builtin.copy:
+        src: "/etc/letsencrypt/live/{{ ansible_fqdn }}/privkey.pem"
+        dest: "/opt/FileMaker/FileMaker Server/CStore/le_privkey.pem"
+        remote_src: yes
+        owner: fmserver
+        group: fmsadmin
+        mode: '0640'
+
+    - name: Delete existing certificate from FileMaker Server
+      ansible.builtin.shell: |
+        echo "{{ fmadmin_password }}" | fmsadmin certificate delete -y -u fmadmin
+      ignore_errors: yes  # Für den Fall, dass kein Zertifikat zum Löschen vorhanden ist
+
+    - name: Import new certificate to FileMaker Server
+      ansible.builtin.shell: |
+        echo "{{ fmadmin_password }}" | fmsadmin certificate import /opt/FileMaker/FileMaker Server/CStore/le_fullchain.pem --keyfile /opt/FileMaker/FileMaker Server/CStore/le_privkey.pem -y -u fmadmin
+
+    - name: Stop FileMaker Server to apply certificate changes
+      ansible.builtin.shell: |
+        echo "{{ fmadmin_password }}" | fmsadmin stop server -y -u fmadmin
