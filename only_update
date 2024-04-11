@@ -1,0 +1,11 @@
+---
+# Playbook that updates all packages without rebooting
+- name: update packages without reboot
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - name: Update and upgrade apt packages
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
