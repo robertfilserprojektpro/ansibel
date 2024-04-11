@@ -4,7 +4,7 @@
   gather_facts: yes  # Benötigt für 'ansible_hostname'
   become: true
   vars:
-    fmadmin_password: "{{ lookup('ansible.builtin.vault', 'vault_fmadmin') }}"
+    fmadmin_password: "{{ lookup('ansible.builtin.vault', 'vault_fmadmin' , vault_id='1') }}"
     domain: "{{ ansible_hostname }}.projektpro.de"  # Kombiniert den Hostnamen mit der Domäne
   tasks:
     - name: Copy fullchain.pem to FileMaker Server directory
