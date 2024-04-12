@@ -1,0 +1,22 @@
+---
+# Playbook to execute a script on target hosts
+- name: Execute letsencrypt script on target hosts
+  hosts: all
+  gather_facts: yes
+  become: true
+
+  tasks:
+    - name: Ensure the script is executable
+      ansible.builtin.file:
+        path: /root/Skript/letsencrypt.sh
+        mode: '0755'
+        state: file
+
+    - name: Execute the letsencrypt script
+      ansible.builtin.shell:
+        cmd: /root/Skript/letsencrypt.sh
+      register: script_output
+
+    - name: Print script output
+      ansible.builtin.debug:
+        msg: "{{ script_output.stdout_lines }}"
