@@ -5,18 +5,11 @@
   tasks:
     - name: Warte auf das Erscheinen der Datei pp_CloudSync.pplog2 im Verzeichnis
       wait_for:
-        path: "/opt/FileMaker/FileMaker\ Server/Data/Documents/Log/pp_CloudSync.pplog2"
+        path: "/opt/FileMaker/FileMaker Server/Data/Documents/Log/pp_CloudSync.pplog2"
         state: present
-        timeout: 259200  # 3 Tage in Sekunden
       register: result
 
-    - name: Überprüfe das Ergebnis des Kopiervorgangs
+    - name: Gebe das Ergebnis des Kopiervorgangs aus
       debug:
         msg: "Datei pp_CloudSync.pplog2 ist im Ordner vorhanden. Kopiervorgang abgeschlossen."
-      when: result.stat.exists is defined and result.stat.exists
-
-    - name: Fallback-Nachricht, wenn Timeout erreicht wird
-      debug:
-        msg: "Timeout erreicht. Datei pp_CloudSync.pplog2 ist nicht im Ordner erschienen."
-      when: not (result.stat.exists is defined and result.stat.exists)
-
+      when: result.state == "present"
