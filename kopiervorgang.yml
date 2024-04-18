@@ -1,0 +1,21 @@
+---
+- name: Überwachung des Kopiervorgangs
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Warte auf das Verschwinden der Datei test.txt im Verzeichnis /tmp
+      wait_for:
+        path: "/tmp/test.txt"
+        state: absent
+        timeout: 259200  # 3 Tage in Sekunden
+      register: result
+
+    - name: Gebe das Ergebnis des Kopiervorgangs aus
+      debug:
+        msg: "Kopiervorgang abgeschlossen. Datei test.txt ist nicht mehr im Ordner /tmp vorhanden."
+      when: result.state == "absent"
+
+    - name: Fallback-Nachricht, wenn Timeout erreicht wird
+      debug:
+        msg: "Timeout erreicht. Kopiervorgang eventuell nicht abgeschlossen."
+      when: result.state != "absent"
