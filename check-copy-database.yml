@@ -10,12 +10,13 @@
         timeout: 259200  # 3 Tage in Sekunden
       register: result
 
-    - name: Gebe das Ergebnis des Kopiervorgangs aus
+    - name: Überprüfe das Ergebnis des Kopiervorgangs
       debug:
         msg: "Datei pp_CloudSync.pplog2 ist im Ordner vorhanden. Kopiervorgang abgeschlossen."
-      when: result.state == "present"
+      when: result.stat.exists is defined and result.stat.exists
 
     - name: Fallback-Nachricht, wenn Timeout erreicht wird
       debug:
         msg: "Timeout erreicht. Datei pp_CloudSync.pplog2 ist nicht im Ordner erschienen."
-      when: result.state != "present"
+      when: not (result.stat.exists is defined and result.stat.exists)
+
