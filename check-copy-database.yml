@@ -5,7 +5,7 @@
   tasks:
     - name: Warte auf das Erscheinen der Datei pp_CloudSync.pplog2 im Verzeichnis
       wait_for:
-        path: "/opt/FileMaker/FileMaker Server/Data/Documents/Log/pp_CloudSync.pplog2"
+        path: "/opt/FileMaker/FileMaker\ Server/Data/Documents/Log/pp_CloudSync.pplog2"
         state: present
         timeout: 259200  # 3 Tage in Sekunden
       register: result
