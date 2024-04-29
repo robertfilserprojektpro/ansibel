@@ -13,4 +13,4 @@
     - name: Gebe das Ergebnis des Kopiervorgangs aus
       debug:
         msg: "Datei pp_CloudSync.pplog2 ist im Ordner vorhanden. Kopiervorgang abgeschlossen."
-      when: result.state == "present"
+      when: result is succeeded
