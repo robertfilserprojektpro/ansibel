@@ -7,6 +7,7 @@
       wait_for:
         path: "/opt/FileMaker/FileMaker\ Server/Data/Documents/Log/pp_CloudSync.pplog2"
         state: present
+        timeout: 172800  # Timeout-Wert in Sekunden (48 Stunden)
       register: result
 
     - name: Gebe das Ergebnis des Kopiervorgangs aus
